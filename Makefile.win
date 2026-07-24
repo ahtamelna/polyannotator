@@ -41,13 +41,14 @@ CPP_OBJ = $(CPP_SRC:.cpp=.o)
 C_OBJ = $(C_SRC:.c=.o)
 
 LDFLAGS = \
--lglfw3 \
--lopengl32 \
--lgdi32 \
--luser32 \
--lshell32 \
--lkernel32 \
--lcomdlg32
+    -lglfw3 \
+    -lopengl32 \
+    -lgdi32 \
+    -luser32 \
+    -lshell32 \
+    -lkernel32 \
+    -lcomdlg32 \
+    -lole32
 
 all: $(TARGET)
 
