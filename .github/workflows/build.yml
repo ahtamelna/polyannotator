@@ -2,7 +2,9 @@ name: Build Windows
 
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -10,7 +12,8 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
@@ -22,21 +25,41 @@ jobs:
             make
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-glfw
+            file
 
-      - name: Verify tools
+      - name: Verify toolchain
         shell: msys2 {0}
         run: |
           which gcc
+          which g++
           which make
           gcc --version
+          g++ --version
           make --version
+
+      - name: Clean previous build
+        shell: msys2 {0}
+        run: |
+          find . -name "*.o" -delete
+          rm -f app.exe
+
+      - name: Test C compiler
+        shell: msys2 {0}
+        run: |
+          gcc -c external/tinyfiledialogs/tinyfiledialogs.c -o test.o
+          file test.o
 
       - name: Build
         shell: msys2 {0}
         run: |
           make -f Makefile.win
 
-      - name: Upload EXE
+      - name: Show executable
+        shell: msys2 {0}
+        run: |
+          ls -l app.exe
+
+      - name: Upload executable
         uses: actions/upload-artifact@v4
         with:
           name: PolyAnnotator-Windows
