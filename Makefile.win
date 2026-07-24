@@ -13,7 +13,7 @@ INCLUDES = -Imodules \
            -Iexternal/stb \
            -Iexternal/json
 
-CXXFLAGS = -std=c++17 -O2 -Wall -Wextra $(INCLUDES)
+CXXFLAGS = -std=c++17 -O2 -Wall -Wextra -static-libgcc -static-libstdc++ $(INCLUDES)
 CFLAGS = $(INCLUDES)
 
 CPP_SRC = \
@@ -53,7 +53,7 @@ LDFLAGS = \
 all: $(TARGET)
 
 $(TARGET): $(CPP_OBJ) $(C_OBJ)
-	$(CXX) $^ $(LDFLAGS) -o $@
+	$(CXX) $^ $(LDFLAGS) -static-libgcc -static-libstdc++ -o $@
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
