@@ -37,27 +37,25 @@ jobs:
           g++ --version
           make --version
 
-      - name: Clean previous build
+      - name: Check GLFW libraries
+        shell: msys2 {0}
+        run: |
+          echo "===== GLFW libraries ====="
+          ls -l /mingw64/lib/libglfw*
+          echo ""
+          echo "===== GLFW DLL ====="
+          ls -l /mingw64/bin/glfw3.dll || true
+
+      - name: Clean
         shell: msys2 {0}
         run: |
           find . -name "*.o" -delete
           rm -f app.exe
 
-      - name: Test C compiler
-        shell: msys2 {0}
-        run: |
-          gcc -c external/tinyfiledialogs/tinyfiledialogs.c -o test.o
-          file test.o
-
       - name: Build
         shell: msys2 {0}
         run: |
           make -f Makefile.win
-
-      - name: Show executable
-        shell: msys2 {0}
-        run: |
-          ls -l app.exe
 
       - name: Upload executable
         uses: actions/upload-artifact@v4
