@@ -1,0 +1,76 @@
+# Windows (MSYS2/MinGW)
+
+CXX = g++
+CC = gcc
+
+INCLUDES = -Imodules \
+           -Iexternal/imgui \
+           -Iexternal/imgui/backends \
+           -Iexternal/miniz \
+           -Iexternal/tinyfiledialogs \
+           -Iexternal/stb \
+           -Iexternal/json
+
+CXXFLAGS = -std=c++17 -O2 -Wall -Wextra $(INCLUDES)
+CFLAGS = $(INCLUDES)
+
+SRC = main.cpp \
+      modules/ImageLoader/ImageLoader.cpp \
+      modules/HtmlExporter/HtmlExporter.cpp \
+      modules/ProjectIO/ProjectIO.cpp \
+      modules/ImportIO/ImportIO.cpp \
+      external/imgui/imgui.cpp \
+      external/imgui/imgui_demo.cpp \
+      external/imgui/imgui_draw.cpp \
+      external/imgui/imgui_tables.cpp \
+      external/imgui/imgui_widgets.cpp \
+      external/imgui/backends/imgui_impl_glfw.cpp \
+      external/imgui/backends/imgui_impl_opengl3.cpp
+
+C_SRC = external/tinyfiledialogs/tinyfiledialogs.c \
+        external/miniz/miniz.c \
+        external/miniz/miniz_tdef.c \
+        external/miniz/miniz_tinfl.c \
+        external/miniz/miniz_zip.c
+
+C_OBJ = external/tinyfiledialogs/tinyfiledialogs.o \
+        external/miniz/miniz.o \
+        external/miniz/miniz_tdef.o \
+        external/miniz/miniz_tinfl.o \
+        external/miniz/miniz_zip.o
+
+TARGET = app.exe
+
+LDFLAGS = \
+    -lglfw3 \
+    -lopengl32 \
+    -lgdi32 \
+    -luser32 \
+    -lshell32 \
+    -lkernel32 \
+    -lcomdlg32
+
+all: $(TARGET)
+
+external/tinyfiledialogs/tinyfiledialogs.o:
+	$(CC) $(CFLAGS) -c external/tinyfiledialogs/tinyfiledialogs.c -o $@
+
+external/miniz/miniz.o:
+	$(CC) $(CFLAGS) -c external/miniz/miniz.c -o $@
+
+external/miniz/miniz_tdef.o:
+	$(CC) $(CFLAGS) -c external/miniz/miniz_tdef.c -o $@
+
+external/miniz/miniz_tinfl.o:
+	$(CC) $(CFLAGS) -c external/miniz/miniz_tinfl.c -o $@
+
+external/miniz/miniz_zip.o:
+	$(CC) $(CFLAGS) -c external/miniz/miniz_zip.c -o $@
+
+$(TARGET): $(C_OBJ)
+	$(CXX) $(CXXFLAGS) $(SRC) $(C_OBJ) $(LDFLAGS) -o $(TARGET)
+
+clean:
+	del /Q *.exe
+	del /Q external\tinyfiledialogs\*.o
+	del /Q external\miniz\*.o
