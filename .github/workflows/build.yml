@@ -17,10 +17,19 @@ jobs:
         with:
           msystem: MINGW64
           update: true
+          path-type: inherit
           install: >
+            make
             mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-make
             mingw-w64-x86_64-glfw
+
+      - name: Verify tools
+        shell: msys2 {0}
+        run: |
+          which gcc
+          which make
+          gcc --version
+          make --version
 
       - name: Build
         shell: msys2 {0}
