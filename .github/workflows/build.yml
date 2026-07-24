@@ -30,21 +30,9 @@ jobs:
       - name: Verify toolchain
         shell: msys2 {0}
         run: |
-          which gcc
-          which g++
-          which make
           gcc --version
           g++ --version
           make --version
-
-      - name: Check GLFW libraries
-        shell: msys2 {0}
-        run: |
-          echo "===== GLFW libraries ====="
-          ls -l /mingw64/lib/libglfw*
-          echo ""
-          echo "===== GLFW DLL ====="
-          ls -l /mingw64/bin/glfw3.dll || true
 
       - name: Clean
         shell: msys2 {0}
@@ -57,8 +45,35 @@ jobs:
         run: |
           make -f Makefile.win
 
-      - name: Upload executable
+      - name: Show dependencies
+        shell: msys2 {0}
+        run: |
+          echo "========== DLL Dependencies =========="
+          ldd app.exe
+
+      - name: Prepare package
+        shell: msys2 {0}
+        run: |
+          mkdir package
+
+          cp app.exe package/
+
+          # Runtime DLLs
+          cp /mingw64/bin/glfw3.dll package/ || true
+          cp /mingw64/bin/libgcc_s_seh-1.dll package/ || true
+          cp /mingw64/bin/libstdc++-6.dll package/ || true
+          cp /mingw64/bin/libwinpthread-1.dll package/ || true
+
+          # Optional libraries that may be required
+          cp /mingw64/bin/libssp-0.dll package/ || true
+          cp /mingw64/bin/libgcc_s_dw2-1.dll package/ || true
+          cp /mingw64/bin/libbrotlicommon.dll package/ || true
+          cp /mingw64/bin/libbrotlidec.dll package/ || true
+          cp /mingw64/bin/libpng16-16.dll package/ || true
+          cp /mingw64/bin/zlib1.dll package/ || true
+
+      - name: Upload package
         uses: actions/upload-artifact@v4
         with:
           name: PolyAnnotator-Windows
-          path: app.exe
+          path: package
